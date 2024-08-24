@@ -1,23 +1,25 @@
-let handler = async (m, {conn, usedPrefix}) => {
-	
-    let who = m.quoted ? m.quoted.sender : m.mentionedJid && m.mentionedJid[0] ? m.mentionedJid[0] : m.fromMe ? conn.user.jid : m.sender
-    let user = global.db.data.users[who]
-    if (!(who in global.db.data.users)) throw `✳️ المستخدم غير موجود في قاعده بيناتي`
+
+//import db from  ../lib/database.js 
+
+const xpperdiamond = 350 
+let handler = async (m, { conn, command, args }) => {
+  let count = command.replace(/^buy/i,   )
+  count = count ? /all/i.test(count) ? Math.floor(global.db.data.users[m.sender].exp / xpperdiamond) : parseInt(count) : args[0] ? parseInt(args[0]) : 1
+  count = Math.max(1, count)
+  if (global.db.data.users[m.sender].exp >= xpperdiamond * count) {
+    global.db.data.users[m.sender].exp -= xpperdiamond * count
+    global.db.data.users[m.sender].diamond += count
     conn.reply(m.chat, `
-*┌●━──━𓊆البنك𓊇━──━●*
-*╎𝑁▣「📌الاسم」:* _@${who.split('@')[0]}_
-*╎𝑁▣「💎الماس」:* _${user.diamond}_
-*╎𝑁▣「👨🏻‍💼الرتبة」:* _${user.role}_
-*╎𝑁▣「🍷الجرعات」:* : _${user.potion}_
-*╎𝑁▣「🪙حديد」:* _${user.iron}_
-*╎𝑁▣「💵المال」:* _${user.money}_
-*╎𝑁▣خبرة🎊」*: _الإجمالي」
-${user.exp}_
-*└●━──𓊆⍣⃝𝐄𝐋𝐙𝟑𝐄𝐌 𝐆𝐎𝐍𓊇──━●*
-`, m, { mentions: [who] })
+┌─「 *NOTA PEMBAYARAN* 」
+‣ *Nominal pembelian* : + ${count}💎 
+‣ *Usang* : -${xpperdiamond * count} XP
+└──────────────`, m)
+  } else conn.reply(m.chat, `❎ معذرةً ، ليس لديك ما يكفي من *XP* للشراء*${count}*الماس\n\n يمكنك الحصول على *XP* باستخدام الأوامر💎 في* الألعاب والقائمة ؛ اقتصاد*`, m)
 }
-handler.help = ['balance']
-handler.tags = ['econ']
-handler.command = ['bal', 'البنك', 'diamond', 'balance'] 
+handler.help = [ buy ,  buyall ]
+handler.tags = [ econ ]
+handler.command = [ البنك ,  بنك ] 
+
+handler.disabled = false
 
 export default handler
